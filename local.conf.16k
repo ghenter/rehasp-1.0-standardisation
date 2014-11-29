@@ -1,0 +1,39 @@
+# Commands and paths
+SOX_PATH=/usr/local/sox
+ITU_PATH=/Users/ghe/local/util/g191e/Software/stl2009/sv56
+
+STD_COMMAND='./standardise_file.sh'
+#SED_OPT="-r" # GNU sed
+SED_OPT="-E" # BSD sed (OS X)
+
+# Data names and directories
+inDataId="96k"
+outDataId="16k_std"
+
+COMMON_DIR=/Users/ghe/local/data/rehasp_1.0
+DATA_DIR=${COMMON_DIR}/${inDataId}
+OUT_DIR=${COMMON_DIR}/${outDataId}
+TMP_DIR=${COMMON_DIR}/tmp/${outDataId}
+
+# Channel to analyse
+channelnum=1
+
+# SoX high-pass filter flags, 6 dB point, and transition band-width
+hpflags="-I"
+hpfreq=55
+hptbw=10
+
+# SoX downsampling parameters
+rateflags="-vsI"
+outrate=16000
+
+# Whether to display processing options automatically added by SoX
+#soxdebug="" # No debugging
+soxdebug="-D" # Show SoX processing information (e.g., dithering)
+
+# Speech analysis
+level="-26"
+#rate=96000
+#fftlen=4096
+#shift=5
+#windur=30

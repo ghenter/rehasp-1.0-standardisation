@@ -1,0 +1,1 @@
+./standardise_folder.sh local.conf.16k > 16k.log 2>&1
