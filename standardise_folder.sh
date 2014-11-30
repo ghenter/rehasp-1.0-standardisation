@@ -29,8 +29,8 @@ mkdir -p ${OUT_DIR}
 echo "Standardising recording data..."
 
 for wavfile in `find ${DATA_DIR} -type f -name '*.wav'`; do
-    #${STD_COMMAND} ${CONFIG_FILE} ${wavfile}
-    echo ${wavfile}
+    #echo ${wavfile}
+    ${STD_COMMAND} ${CONFIG_FILE} ${wavfile}
 done
 
 echo "Done"

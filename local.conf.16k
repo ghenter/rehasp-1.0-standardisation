@@ -26,14 +26,9 @@ hptbw=10
 # SoX downsampling parameters
 rateflags="-vsI"
 outrate=16000
+outbits=16
+outlevel="-26" # dBov
 
 # Whether to display processing options automatically added by SoX
-#soxdebug="" # No debugging
-soxdebug="-D" # Show SoX processing information (e.g., dithering)
-
-# Speech analysis
-level="-26"
-#rate=96000
-#fftlen=4096
-#shift=5
-#windur=30
+soxdebug="" # No debugging
+#soxdebug="-V" # Show SoX processing information (e.g., dithering)
