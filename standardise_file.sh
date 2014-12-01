@@ -28,6 +28,7 @@ indir=`dirname $inwav`
 outbase=`echo ${inbase} | sed s/${inDataId}/${outDataId}/`
 outdir=`echo ${indir} | sed s#${DATA_DIR}#${OUT_DIR}#` # Assumes no '#' in path
 
+# Store log file paths in single variables for convenience
 soxlog=${TMP_DIR}/raw/${inbase}.sox.log
 sv56log=${TMP_DIR}/norm/${inbase}.sv56.log
 
@@ -37,9 +38,10 @@ mkdir -p ${TMP_DIR}/norm
 
 mkdir -p ${outdir}
 
-# Compute normalisation factor
-safegain=1
-makeraw=1
+# Most of the work from now on is to compute the proper normalisation factor
+
+safegain=1 # "Safety-margin" pre-gain factor
+makeraw=1 # Loop variable
 
 while [ ${makeraw} -eq 1 ]
 do
@@ -52,16 +54,17 @@ do
         rate ${rateflags} ${outrate} \
         2> ${soxlog}
     
-    # Check if there were any clipping during SoX operations
+    # Check if clipping occurred during SoX operations
     if test -e ${soxlog}
     then
         if [ `grep -c "clip" ${soxlog}` -gt 0 ];
         then
+            # Reduce the gain on the input file and retry
             safegain=`echo 0.75\*${safegain} | bc -l`
             echo "...reducing pre-gain on ${inbase}.wav"\
                 "to ${safegain} due to clipping..."
         else
-            makeraw=0
+            makeraw=0 # No need to retry; exit loop
         fi
     else
         echo "...${inbase}.wav was skipped due to failure to find sox log file..."
@@ -94,15 +97,15 @@ else
     exit 0
 fi
 
-# Extract the normalisation factor from the log file
+# Extract the normalisation factor from the sv56demo log file
 normcoeff=`grep 'Norm factor desired' ${sv56log} \
     | grep -o '[^ ]*[ ]*\[times\][ ]*$' \
     | sed ${SED_OPT} 's/[ ]*\[times\][ ]*$//g'`
 
-# Include the effect of safety pre-gain factor
+# Include the effect of the safety-margin pre-gain factor
 normcoeff=`echo ${safegain}\*${normcoeff} | bc -l`
 
-# Create properly normalised, processed file
+# Create properly normalised, processed final file
 sox ${soxdebug} ${inwav} \
     -b ${outbits} ${outdir}/${outbase}.wav \
     remix ${channelnum} \
@@ -110,6 +113,7 @@ sox ${soxdebug} ${inwav} \
     sinc ${hpflags} -t ${hptbw} ${hpfreq} \
     rate ${rateflags} ${outrate}
 
+# Append the normalisation factor to a log file
 echo ${inbase}':'${normcoeff} >> ${TMP_DIR}/normcoeffs.log
 
 exit 0

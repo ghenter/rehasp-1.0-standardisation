@@ -29,7 +29,7 @@ mkdir -p ${OUT_DIR}
 echo "Standardising recording data..."
 
 for wavfile in `find ${DATA_DIR} -type f -name '*.wav'`; do
-    #echo ${wavfile}
+    #echo ${wavfile} # Uncomment to print the name of each file being processed
     ${STD_COMMAND} ${CONFIG_FILE} ${wavfile}
 done
 
